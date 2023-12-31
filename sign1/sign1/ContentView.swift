@@ -20,7 +20,7 @@ struct ContentView: View {
                 .buttonStyle(CaringButtonStyle())
             }
             .padding()
-            .background(PatternedBackground()) // 使用图案背景
+            .background(WavePatternBackground()) // 使用波浪线图案背景
             .navigationTitle("Sath")
         }
     }
@@ -40,22 +40,23 @@ struct CaringButtonStyle: ButtonStyle {
     }
 }
 
-// 用于背景的图案
-struct PatternedBackground: View {
+// 波浪线图案背景
+struct WavePatternBackground: View {
     var body: some View {
         GeometryReader { geometry in
             Path { path in
-                let size = geometry.size
-                let dotSize: CGFloat = 5
-                let spacing: CGFloat = 20
+                let width = geometry.size.width
+                let height = geometry.size.height
 
-                for x in stride(from: 0, through: size.width, by: spacing) {
-                    for y in stride(from: 0, through: size.height, by: spacing) {
-                        path.addEllipse(in: CGRect(x: x, y: y, width: dotSize, height: dotSize))
-                    }
+                // 创建波浪线
+                path.move(to: CGPoint(x: 0, y: height * 0.5))
+                for x in stride(from: 0, through: width, by: 40) {
+                    let relativeX = x / width
+                    let y = height * 0.5 + sin(relativeX * 2 * .pi) * 20
+                    path.addLine(to: CGPoint(x: x, y: y))
                 }
             }
-            .fill(Color.gray.opacity(0.2)) // 浅灰色的小圆点
+            .stroke(Color.blue.opacity(0.5), lineWidth: 2)
         }
     }
 }
