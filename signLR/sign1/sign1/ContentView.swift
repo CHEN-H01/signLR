@@ -2,32 +2,35 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showCamera = false
-
     var body: some View {
         ZStack {
-            // 自定义背景
-            CustomBackground()
-                .edgesIgnoringSafeArea(.all)
-
-            NavigationView {
-                VStack(spacing: 20) {
-                    Button("Open Camera") {
-                        showCamera = true
-                    }
-                    .buttonStyle(CaringButtonStyle())
-                    .sheet(isPresented: $showCamera) {
-                        CameraViewAdapter()
-                    }
-
-                    Button("Upload Video") {
-                        // 添加上传视频的逻辑
-                    }
-                    .buttonStyle(CaringButtonStyle())
+//            // 自定义背景
+//            CustomBackground()
+//                .edgesIgnoringSafeArea(.all)
+            VStack(spacing: 20) {
+                Button("Open Camera") {
+                    showCamera = true
                 }
-                .padding()
-                .navigationTitle("My App")
+                .buttonStyle(CaringButtonStyle())
+                .sheet(isPresented: $showCamera) {
+                    CameraViewAdapter()
+                }
+
+                Button("Upload Video") {
+                    // 添加上传视频的逻辑
+                }
+                .buttonStyle(CaringButtonStyle())
             }
         }
+        // 使布局撑满屏幕
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+        // 设置背景色
+        .background(
+            Image("back")
+                .resizable()
+                .scaledToFill()
+                .edgesIgnoringSafeArea(.all)
+        )
     }
 }
 
@@ -35,12 +38,14 @@ struct ContentView: View {
 struct CaringButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .frame(width:200, height: 25, alignment: .center)
             .padding()
-            .background(LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.7), Color.blue]), startPoint: .top, endPoint: .bottom))
+            .background(LinearGradient(gradient: Gradient(colors:   [Color.blue.opacity(0.7), Color.blue]), startPoint: .top, endPoint: .bottom))
             .foregroundColor(.white)
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .font(.title)
+            
     }
 }
 
@@ -63,3 +68,6 @@ struct CustomBackground: View {
         }
     }
 }
+
+
+
