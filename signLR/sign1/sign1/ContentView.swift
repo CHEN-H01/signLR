@@ -105,8 +105,17 @@ struct ContentView: View {
                     CameraViewAdapter()
                 }
                 
-                Button(action: { upload_action("Upload Video") }, label: { label2 })
+                Button(action: { showPhotoPicker = true }, label: {
+                    Text("Upload Video")
+                })
                 .buttonStyle(.roundedAndShadowPro)
+                .sheet(isPresented: $showPhotoPicker) {
+                    PhotoPicker(selectionLimit: 1, filter: .videos) { results in
+                        if let result = results.first {
+                            handlePickedVideo(result)
+                        }
+                    }
+                }
                 
             }
         }
@@ -128,6 +137,38 @@ struct ContentView: View {
     
     func upload_action(_ text: String) {
         print(text)
+    }
+
+
+    func handlePickedVideo(_ result: PHPickerResult) {
+        result.itemProvider.loadFileRepresentation(forTypeIdentifier: UTType.movie.identifier) { url, error in
+            guard let url = url, error == nil else { return }
+            
+            // Update UI if needed
+            DispatchQueue.main.async {
+                self.videoURL = url
+                // Now you can upload the video to your server
+                uploadVideoToServer(videoURL: url)
+            }
+        }
+    }
+
+    func uploadVideoToServer(videoURL: URL) {
+        // Specify your server upload URL and parameters
+        let uploadURL = "https://yourserver.com/upload"
+        
+        AF.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(videoURL, withName: "video", fileName: videoURL.lastPathComponent, mimeType: "video/mp4")
+        }, to: uploadURL).response { response in
+            switch response.result {
+            case .success(let responseData):
+                // Handle success
+                print("Video uploaded successfully: \(String(describing: responseData))")
+            case .failure(let error):
+                // Handle error
+                print("Error uploading video: \(error.localizedDescription)")
+            }
+        }
     }
 }
     
