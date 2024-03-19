@@ -1,6 +1,8 @@
 import Foundation
 import SwiftUI
-
+import PhotosUI
+import UniformTypeIdentifiers
+import Alamofire
 //struct ButtonView<V>: View where V: View {
 //    let label: V
 //    let action: () -> Void
@@ -95,6 +97,8 @@ extension ButtonStyle where Self == RoundedAndShadowProButtonStyle {
 
 struct ContentView: View {
     @State private var showCamera = false
+    @State private var showPhotoPicker = false
+
     var body: some View {
         ZStack {
             VStack(spacing: 20) {

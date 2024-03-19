@@ -2,11 +2,36 @@ import Foundation
 
 class VideoUploader {
     func uploadVideo(_ videoURL: URL, completion: @escaping (String) -> Void) {
-        // 实现上传视频到服务器的逻辑
-        // 创建和配置 URLSession 任务，发送 HTTP 请求
-        // 处理服务器的响应
+        // 1. 创建请求的 URL
+    guard let uploadURL = URL(string: "https://yourserver.com/upload") else {
+        completion("Invalid upload URL")
+        return
+    }
 
-        // 示例响应
-        completion("服务器响应的字符串")
+    // 2. 创建 URLRequest
+    var request = URLRequest(url: uploadURL)
+    request.httpMethod = "POST"
+
+    // 3. 准备上传的数据
+    let videoData = try? Data(contentsOf: videoURL)
+
+    // 4. 使用 URLSession 上传数据
+    let task = URLSession.shared.uploadTask(with: request, from: videoData) { data, response, error in
+        // 处理响应和错误
+        guard let data = data, error == nil else {
+            completion("Upload failed: \(error?.localizedDescription ?? "Unknown error")")
+            return
+        }
+
+        // 解析响应数据
+        if let responseString = String(data: data, encoding: .utf8) {
+            completion(responseString)
+        } else {
+            completion("Failed to decode response")
+        }
+    }
+
+    // 5. 开始上传任务
+    task.resume()
     }
 }
